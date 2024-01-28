@@ -45,6 +45,13 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 });
             }
 
+            var providers = avatar.GetComponentsInChildren<IParameterNameAndTypesProvider>();
+            foreach (var provider in providers)
+            {
+                Debug.Log(provider);
+                parameters.AddRange(provider.GetParameterNameAndTypes());
+            }
+
             if (includeAnimators)
             {
                 var animatorControllers =
