@@ -10,19 +10,17 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
     public class ParametersPopupWindow : PopupWindowContent
     {
-        public Action Redraw;
+        public Action<string> UpdateProperty;
         VRCAvatarDescriptor Avatar;
         VRCExpressionParameters.Parameter[] Parameters;
-        SerializedProperty Property;
         SearchField SearchField;
         string SearchQuery;
         bool IncludeAnimators;
         ParametersTreeView TreeView;
 
-        public ParametersPopupWindow(VRCAvatarDescriptor avatar, SerializedProperty property)
+        public ParametersPopupWindow(VRCAvatarDescriptor avatar)
         {
             Avatar = avatar;
-            Property = property;
         }
 
         public override void OnGUI(Rect rect)
@@ -48,15 +46,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 {
                     OnSelect = (parameter) =>
                     {
-                        Property.stringValue = parameter.name;
-                        Property.serializedObject.ApplyModifiedProperties();
-                        if (Redraw != null) Redraw();
+                        if (UpdateProperty != null) UpdateProperty(parameter.name);
                     },
                     OnCommit = (parameter) =>
                     {
-                        Property.stringValue = parameter.name;
-                        Property.serializedObject.ApplyModifiedProperties();
-                        if (Redraw != null) Redraw();
+                        if (UpdateProperty != null) UpdateProperty(parameter.name);
                         editorWindow.Close();
                     }
                 };

@@ -22,7 +22,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         void OnEnable()
         {
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
-            ParametersCache = GetParameters();
+            UpdateParametersCache();
             ParameterNameToIndexCache = ParametersCache.Select((p, index) => new { p.name, index }).ToDictionary(p => p.name, p => p.index);
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
@@ -79,7 +79,12 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             GUIStyle style = "IN DropDown";
             if (EditorGUI.DropdownButton(rect, GUIContent.none, FocusType.Keyboard, style))
             {
-                PopupWindow.Show(rect, new ParametersPopupWindow(GetParentAvatar(), property));
+                PopupWindow.Show(rect, new ParametersPopupWindow(GetParentAvatar()) { UpdateProperty = (name) =>
+                {
+                    property.stringValue = name;
+                    serializedObject.ApplyModifiedProperties();
+                    UpdateParametersCache();
+                }});
             }
             var parameter = GetParameter(property.stringValue);
             rect.x -= 30;
@@ -326,10 +331,10 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             return parametersList;
         }
 
-        VRCExpressionParameters.Parameter[] GetParameters()
+        void UpdateParametersCache()
         {
             var avatar = GetParentAvatar();
-            return Util.GetParameters(avatar, true);
+            ParametersCache = Util.GetParameters(avatar, true);
         }
 
         VRCExpressionParameters.Parameter GetParameter(string name)
