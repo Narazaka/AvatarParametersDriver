@@ -79,7 +79,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             GUIStyle style = "IN DropDown";
             if (EditorGUI.DropdownButton(rect, GUIContent.none, FocusType.Keyboard, style))
             {
-                PopupWindow.Show(rect, new ParametersPopupWindow(ParametersCache, property, rect.width));
+                PopupWindow.Show(rect, new ParametersPopupWindow(GetParentAvatar(), property));
             }
             var parameter = GetParameter(property.stringValue);
             rect.x -= 30;
@@ -329,7 +329,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         VRCExpressionParameters.Parameter[] GetParameters()
         {
             var avatar = GetParentAvatar();
-            return Util.GetParameters(avatar);
+            return Util.GetParameters(avatar, true);
         }
 
         VRCExpressionParameters.Parameter GetParameter(string name)

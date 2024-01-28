@@ -5,12 +5,13 @@ using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using UnityEngine;
 using UnityEditor.Animations;
+using VRC.SDK3.Dynamics.Contact.Components;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
     public static class Util
     {
-        public static VRCExpressionParameters.Parameter[] GetParameters(VRCAvatarDescriptor avatar)
+        public static VRCExpressionParameters.Parameter[] GetParameters(VRCAvatarDescriptor avatar, bool includeAnimators = false)
         {
             var parameters = new List<VRCExpressionParameters.Parameter>();
             if (avatar == null)
@@ -31,7 +32,49 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 }));
             }
 
-            return parameters.ToArray();
+            var receivers = avatar.GetComponentsInChildren<VRCContactReceiver>();
+            foreach (var receiver in receivers)
+            {
+                parameters.Add(new VRCExpressionParameters.Parameter
+                {
+                    name = receiver.parameter,
+                    valueType = receiver.receiverType == VRC.Dynamics.ContactReceiver.ReceiverType.Proximity ? VRCExpressionParameters.ValueType.Float : VRCExpressionParameters.ValueType.Bool,
+                    saved = false,
+                    defaultValue = 0f,
+                    networkSynced = false,
+                });
+            }
+
+            if (includeAnimators)
+            {
+                var animatorControllers =
+                    avatar.customizeAnimationLayers
+                    ? avatar.baseAnimationLayers.Where(l => !l.isDefault).Select(l => l.animatorController).Concat(avatar.specialAnimationLayers.Where(l => !l.isDefault).Select(l => l.animatorController)).Where(ac => ac != null)
+                    : new RuntimeAnimatorController[0];
+                var maMergeAnimators = avatar.GetComponentsInChildren<ModularAvatarMergeAnimator>();
+                animatorControllers = animatorControllers.Concat(maMergeAnimators.Select(ma => ma.animator).Where(ac => ac != null));
+                foreach (var animatorController in animatorControllers)
+                {
+                    var controller = animatorController as AnimatorController;
+                    if (controller == null) continue;
+                    parameters.AddRange(controller.parameters.Select(p => p.ToVRCExpressionParametersParameter()));
+                }
+            }
+
+            return parameters.Where(p => !string.IsNullOrEmpty(p.name)).Distinct(new ParameterNameComparer()).ToArray();
+        }
+
+        class ParameterNameComparer : IEqualityComparer<VRCExpressionParameters.Parameter>
+        {
+            public bool Equals(VRCExpressionParameters.Parameter x, VRCExpressionParameters.Parameter y)
+            {
+                return x.name == y.name;
+            }
+
+            public int GetHashCode(VRCExpressionParameters.Parameter obj)
+            {
+                return obj.name.GetHashCode();
+            }
         }
 
         public static AnimatorControllerParameterType ToAnimatorControllerParameterType(this VRCExpressionParameters.ValueType valueType)
@@ -49,6 +92,21 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             }
         }
 
+        public static VRCExpressionParameters.ValueType ToVRCExpressionParametersValueType(this AnimatorControllerParameterType valueType)
+        {
+            switch (valueType)
+            {
+                case AnimatorControllerParameterType.Bool:
+                    return VRCExpressionParameters.ValueType.Bool;
+                case AnimatorControllerParameterType.Int:
+                    return VRCExpressionParameters.ValueType.Int;
+                case AnimatorControllerParameterType.Float:
+                    return VRCExpressionParameters.ValueType.Float;
+                default:
+                    throw new System.InvalidCastException();
+            }
+        }
+
         public static AnimatorControllerParameter ToAnimatorControllerParameter(this VRCExpressionParameters.Parameter parameter)
         {
             return new AnimatorControllerParameter
@@ -58,6 +116,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 defaultBool = parameter.valueType == VRCExpressionParameters.ValueType.Bool ? parameter.defaultValue > 0.5f : false,
                 defaultInt = parameter.valueType == VRCExpressionParameters.ValueType.Int ? (int)parameter.defaultValue : 0,
                 defaultFloat = parameter.valueType == VRCExpressionParameters.ValueType.Float ? parameter.defaultValue : 0f,
+            };
+        }
+
+        public static VRCExpressionParameters.Parameter ToVRCExpressionParametersParameter(this AnimatorControllerParameter parameter)
+        {
+            return new VRCExpressionParameters.Parameter
+            {
+                name = parameter.name,
+                valueType = parameter.type.ToVRCExpressionParametersValueType(),
+                saved = false,
+                defaultValue = parameter.type == AnimatorControllerParameterType.Bool ? (parameter.defaultBool ? 1f : 0f) : parameter.type == AnimatorControllerParameterType.Int ? parameter.defaultInt : parameter.defaultFloat,
+                networkSynced = false,
             };
         }
 

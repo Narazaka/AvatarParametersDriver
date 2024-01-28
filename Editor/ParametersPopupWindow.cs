@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
@@ -10,18 +11,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
     public class ParametersPopupWindow : PopupWindowContent
     {
         public Action Redraw;
+        VRCAvatarDescriptor Avatar;
         VRCExpressionParameters.Parameter[] Parameters;
         SerializedProperty Property;
-        float Width;
         SearchField SearchField;
         string SearchQuery;
+        bool IncludeAnimators;
         ParametersTreeView TreeView;
 
-        public ParametersPopupWindow(VRCExpressionParameters.Parameter[] parameters, SerializedProperty property, float width)
+        public ParametersPopupWindow(VRCAvatarDescriptor avatar, SerializedProperty property)
         {
-            Parameters = parameters;
+            Avatar = avatar;
             Property = property;
-            Width = width;
         }
 
         public override void OnGUI(Rect rect)
@@ -30,6 +31,15 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             if (SearchField == null) SearchField = new SearchField();
             SearchQuery = SearchField.OnGUI(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), SearchQuery);
 
+            rect.y += EditorGUIUtility.singleLineHeight;
+            rect.height -= EditorGUIUtility.singleLineHeight;
+            var newIncludeAnimators = EditorGUI.Toggle(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), "Include Animators", IncludeAnimators);
+            if (newIncludeAnimators != IncludeAnimators || Parameters == null)
+            {
+                IncludeAnimators = newIncludeAnimators;
+                Parameters = Util.GetParameters(Avatar, IncludeAnimators);
+                TreeView = null;
+            }
             rect.y += EditorGUIUtility.singleLineHeight;
             rect.height -= EditorGUIUtility.singleLineHeight;
             if (TreeView == null)
