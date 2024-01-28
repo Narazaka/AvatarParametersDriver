@@ -23,7 +23,6 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
             UpdateParametersCache();
-            ParameterNameToIndexCache = ParametersCache.Select((p, index) => new { p.name, index }).ToDictionary(p => p.name, p => p.index);
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
             {
@@ -335,6 +334,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             var avatar = GetParentAvatar();
             ParametersCache = Util.GetParameters(avatar, true);
+            ParameterNameToIndexCache = ParametersCache.Select((p, index) => new { p.name, index }).ToDictionary(p => p.name, p => p.index);
         }
 
         VRCExpressionParameters.Parameter GetParameter(string name)
