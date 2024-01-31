@@ -4,6 +4,14 @@ VRC Parameter Driverを便利に使うコンポーネント
 
 ![Avatar Parameters Driver](docs~/AvatarParametersDriver.png)
 
+コンポーネントに設定するだけでアニメーションの条件遷移とVRC Avatar Parameter Driverが生成されます。
+
+アバター衣装の依存関係制御などにご活用下さい。
+
+手動アニメーション編集やAvatarMenuCreatorなどでは面倒だった、水着と服同時に出さないみたいなパラメーターの依存関係が簡単に設定出来たりします。
+
+NDMF・Modular Avatarを利用しています。
+
 ## インストール
 
 ### VCCによる方法
