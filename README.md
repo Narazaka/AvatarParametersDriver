@@ -4,10 +4,6 @@ VRC Parameter Driverを便利に使うコンポーネント
 
 ![Avatar Parameters Driver](docs~/AvatarParametersDriver.png)
 
-↓
-
-![result](docs~/AvatarParametersDriverResult.png)
-
 ## インストール
 
 ### VCCによる方法
