@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
-    class ParameterUtil
+    public class ParameterUtil
     {
         static Dictionary<SerializedObject, ParameterUtil> Cache = new Dictionary<SerializedObject, ParameterUtil>();
 
