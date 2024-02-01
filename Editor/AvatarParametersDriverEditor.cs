@@ -16,13 +16,12 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         ReorderableList DriveSettingsList;
         Dictionary<int, ReorderableList> ContitionsListCache = new Dictionary<int, ReorderableList>();
         Dictionary<int, ReorderableList> ParametersListCache = new Dictionary<int, ReorderableList>();
-        VRCExpressionParameters.Parameter[] ParametersCache;
-        Dictionary<string, int> ParameterNameToIndexCache = new Dictionary<string, int>();
+        ParameterUtil ParameterUtil;
 
         void OnEnable()
         {
+            ParameterUtil = new ParameterUtil(serializedObject, GetParentAvatar);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
-            UpdateParametersCache();
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
             {
@@ -69,28 +68,6 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        void ShowParameterField(Rect rect, SerializedProperty property)
-        {
-            rect.width -= EditorGUIUtility.singleLineHeight;
-            EditorGUI.PropertyField(rect, property, GUIContent.none);
-            rect.x += rect.width;
-            rect.width = EditorGUIUtility.singleLineHeight;
-            GUIStyle style = "IN DropDown";
-            if (EditorGUI.DropdownButton(rect, GUIContent.none, FocusType.Keyboard, style))
-            {
-                PopupWindow.Show(rect, new ParametersPopupWindow(GetParentAvatar()) { UpdateProperty = (name) =>
-                {
-                    property.stringValue = name;
-                    serializedObject.ApplyModifiedProperties();
-                    UpdateParametersCache();
-                }});
-            }
-            var parameter = GetParameter(property.stringValue);
-            rect.x -= 30;
-            rect.width = 30;
-            EditorGUI.LabelField(rect, parameter == null ? "?" : parameter.valueType.ToString(), EditorStyles.centeredGreyMiniLabel);
-        }
-
         ReorderableList GetConditionsList(int index, SerializedProperty driveSetting = null)
         {
             if (!ContitionsListCache.TryGetValue(index, out var conditionsList))
@@ -113,13 +90,13 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var parameter = element.FindPropertyRelative(nameof(DriveCondition.Parameter));
                 var mode = element.FindPropertyRelative(nameof(DriveCondition.Mode));
                 var threshold = element.FindPropertyRelative(nameof(DriveCondition.Threshold));
-                var valueType = GetParameter(parameter.stringValue)?.valueType;
+                var valueType = ParameterUtil.GetParameter(parameter.stringValue)?.valueType;
                 var width = rect.width;
                 rect.width = 65;
                 EditorGUI.LabelField(rect, "Parameter");
                 rect.x += rect.width;
                 rect.width = width - 195;
-                ShowParameterField(rect, parameter);
+                ParameterUtil.ShowParameterField(rect, parameter);
                 if (mode.enumValueIndex == -1) mode.enumValueIndex = 0;
                 if (valueType is VRCExpressionParameters.ValueType type)
                 {
@@ -204,7 +181,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var type = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.type));
                 var name = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.name));
                 var value = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.value));
-                var parameter = GetParameter(name.stringValue);
+                var parameter = ParameterUtil.GetParameter(name.stringValue);
                 var parameterIsBool = parameter != null && parameter.valueType == VRCExpressionParameters.ValueType.Bool;
                 switch (type.enumValueIndex)
                 {
@@ -213,7 +190,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 180;
-                        ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterField(rect, name);
                         if (parameterIsBool)
                         {
                             var chance = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.chance));
@@ -243,7 +220,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 180;
-                        ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterField(rect, name);
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
@@ -272,7 +249,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
                         rect.x = x + 70;
                         rect.width = width - 180;
-                        ShowParameterField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)));
+                        ParameterUtil.ShowParameterField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)));
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
@@ -292,7 +269,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 115;
-                        ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterField(rect, name);
                         rect.x += rect.width;
                         rect.width = 45;
                         if (parameterIsBool)
@@ -328,22 +305,6 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 }
             };
             return parametersList;
-        }
-
-        void UpdateParametersCache()
-        {
-            var avatar = GetParentAvatar();
-            ParametersCache = Util.GetParameters(avatar, true);
-            ParameterNameToIndexCache = ParametersCache.Select((p, index) => new { p.name, index }).ToDictionary(p => p.name, p => p.index);
-        }
-
-        VRCExpressionParameters.Parameter GetParameter(string name)
-        {
-            if (ParameterNameToIndexCache.TryGetValue(name, out var index))
-            {
-                return ParametersCache[index];
-            }
-            return null;
         }
 
         VRCAvatarDescriptor GetParentAvatar()
