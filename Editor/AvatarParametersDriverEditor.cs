@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using VRC.SDKBase;
 using VRC.SDK3.Avatars.ScriptableObjects;
-using VRC.SDK3.Avatars.Components;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
@@ -20,7 +18,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
         void OnEnable()
         {
-            ParameterUtil = new ParameterUtil(serializedObject, GetParentAvatar);
+            ParameterUtil = new ParameterUtil(serializedObject);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
@@ -305,12 +303,6 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 }
             };
             return parametersList;
-        }
-
-        VRCAvatarDescriptor GetParentAvatar()
-        {
-            var driver = target as AvatarParametersDriver;
-            return driver.GetComponentInParent<VRCAvatarDescriptor>();
         }
     }
 }

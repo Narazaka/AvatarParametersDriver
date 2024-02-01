@@ -1,11 +1,7 @@
-﻿using System;
-using System.Linq;
-using nadena.dev.modular_avatar.core;
+﻿using System.Linq;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using UnityEngine;
-using UnityEditor.Animations;
-using VRC.SDK3.Dynamics.Contact.Components;
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -13,15 +9,13 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
     class ParameterUtil
     {
-        public Func<VRCAvatarDescriptor> GetParentAvatar;
         public SerializedObject SerializedObject;
         VRCExpressionParameters.Parameter[] ParametersCache;
         Dictionary<string, int> ParameterNameToIndexCache = new Dictionary<string, int>();
 
-        public ParameterUtil(SerializedObject serializedObject, Func<VRCAvatarDescriptor> getParentAvatar)
+        public ParameterUtil(SerializedObject serializedObject)
         {
             SerializedObject = serializedObject;
-            GetParentAvatar = getParentAvatar;
             UpdateParametersCache();
         }
 
@@ -64,6 +58,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             var avatar = GetParentAvatar();
             ParametersCache = Util.GetParameters(avatar, true);
             ParameterNameToIndexCache = ParametersCache.Select((p, index) => new { p.name, index }).ToDictionary(p => p.name, p => p.index);
+        }
+
+        VRCAvatarDescriptor GetParentAvatar()
+        {
+            return (SerializedObject.targetObject as Component).GetComponentInParent<VRCAvatarDescriptor>();
         }
     }
 }
