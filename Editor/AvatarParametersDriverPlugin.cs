@@ -70,13 +70,13 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                     {
                         toActive.AddCondition((AnimatorConditionMode)condition.Mode, condition.Threshold, condition.Parameter);
                     }
-                    var toIdle = activeState.AddTransition(idleState);
-                    toIdle.hasExitTime = false;
-                    toIdle.hasFixedDuration = true;
-                    toIdle.duration = 0f;
-                    toIdle.exitTime = 0f;
                     foreach (var condition in driveSetting.Contitions)
                     {
+                        var toIdle = activeState.AddTransition(idleState);
+                        toIdle.hasExitTime = false;
+                        toIdle.hasFixedDuration = true;
+                        toIdle.duration = 0f;
+                        toIdle.exitTime = 0f;
                         toIdle.AddCondition(((AnimatorConditionMode)condition.Mode).Reverse(), condition.Threshold, condition.Parameter);
                     }
                 }
