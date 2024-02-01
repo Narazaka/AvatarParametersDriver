@@ -18,7 +18,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
         void OnEnable()
         {
-            ParameterUtil = new ParameterUtil(serializedObject);
+            ParameterUtil = ParameterUtil.Get(serializedObject, true);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>

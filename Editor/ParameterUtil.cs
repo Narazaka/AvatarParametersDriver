@@ -9,6 +9,25 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
     class ParameterUtil
     {
+        static Dictionary<SerializedObject, ParameterUtil> Cache = new Dictionary<SerializedObject, ParameterUtil>();
+
+        public static ParameterUtil Get(SerializedObject serializedObject, bool forceUpdate = false)
+        {
+            if (Cache.TryGetValue(serializedObject, out var parameterUtil) && parameterUtil != null)
+            {
+                if (forceUpdate)
+                {
+                    parameterUtil.UpdateParametersCache();
+                }
+            }
+            else
+            {
+                parameterUtil = new ParameterUtil(serializedObject);
+                Cache.Add(serializedObject, parameterUtil);
+            }
+            return parameterUtil;
+        }
+
         public SerializedObject SerializedObject;
         VRCExpressionParameters.Parameter[] ParametersCache;
         Dictionary<string, int> ParameterNameToIndexCache = new Dictionary<string, int>();
