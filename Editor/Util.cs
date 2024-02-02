@@ -108,6 +108,8 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                     return VRCExpressionParameters.ValueType.Int;
                 case AnimatorControllerParameterType.Float:
                     return VRCExpressionParameters.ValueType.Float;
+                case AnimatorControllerParameterType.Trigger:
+                    return VRCExpressionParameters.ValueType.Bool;
                 default:
                     throw new System.InvalidCastException();
             }
