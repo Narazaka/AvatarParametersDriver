@@ -26,6 +26,8 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 1.2.3
+  - Animator内にTriggerがあるとエラーになる問題を修正
 - 1.2.2
   - Avatar Optimizerの警告を削減
 - 1.2.1
