@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using VRC.SDKBase;
 using VRC.SDK3.Avatars.ScriptableObjects;
+using Narazaka.VRChat.AvatarParametersUtil.Editor;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
@@ -14,11 +15,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         ReorderableList DriveSettingsList;
         Dictionary<int, ReorderableList> ContitionsListCache = new Dictionary<int, ReorderableList>();
         Dictionary<int, ReorderableList> ParametersListCache = new Dictionary<int, ReorderableList>();
-        ParameterUtil ParameterUtil;
+        AvatarParametersUtilEditor ParameterUtil;
 
         void OnEnable()
         {
-            ParameterUtil = ParameterUtil.Get(serializedObject, true);
+            ParameterUtil = AvatarParametersUtilEditor.Get(serializedObject, true);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
@@ -77,6 +78,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
         ReorderableList SetupConditionsList(SerializedProperty conditionsElement)
         {
+            var parameterLabelContent = new GUIContent("Parameter");
             var conditionsList = new ReorderableList(serializedObject, conditionsElement);
             conditionsList.drawHeaderCallback = (Rect rect) =>
             {
@@ -84,7 +86,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             };
             conditionsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
-                EditorGUI.PropertyField(rect, conditionsList.serializedProperty.GetArrayElementAtIndex(index));
+                EditorGUI.PropertyField(rect, conditionsList.serializedProperty.GetArrayElementAtIndex(index), parameterLabelContent);
             };
             conditionsList.elementHeight = EditorGUIUtility.singleLineHeight;
             return conditionsList;
@@ -122,7 +124,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 180;
-                        ParameterUtil.ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterNameField(rect, name, GUIContent.none);
                         if (parameterIsBool)
                         {
                             var chance = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.chance));
@@ -152,7 +154,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 180;
-                        ParameterUtil.ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterNameField(rect, name, GUIContent.none);
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
@@ -181,7 +183,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
                         rect.x = x + 70;
                         rect.width = width - 180;
-                        ParameterUtil.ShowParameterField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)));
+                        ParameterUtil.ShowParameterNameField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)), GUIContent.none);
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
@@ -201,7 +203,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 115;
-                        ParameterUtil.ShowParameterField(rect, name);
+                        ParameterUtil.ShowParameterNameField(rect, name, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = 45;
                         if (parameterIsBool)

@@ -7,6 +7,7 @@ using nadena.dev.ndmf;
 using UnityEngine.Animations;
 using UnityEditor.Animations;
 using VRC.SDK3.Avatars.Components;
+using Narazaka.VRChat.AvatarParametersUtil;
 
 [assembly: ExportsPlugin(typeof(net.narazaka.vrchat.avatar_parameters_driver.editor.AvatarParametersDriverPlugin))]
 
@@ -24,7 +25,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             {
                 var avatarParametersDrivers = ctx.AvatarRootObject.GetComponentsInChildren<AvatarParametersDriver>();
                 if (avatarParametersDrivers.Length == 0) return;
-                var parameters = Util.GetParameters(ctx.AvatarDescriptor, true);
+                var parameters = AvatarParametersUtil.GetParameters(ctx.AvatarDescriptor, true);
                 var parameterByName = parameters.ToDictionary(p => p.name);
 
                 var driveSettings = avatarParametersDrivers.SelectMany(d => d.DriveSettings).ToList();

@@ -11,6 +11,7 @@
   "type": "tool",
   "url" : "https://github.com/Narazaka/AvatarParametersDriver.git",
   "vpmDependencies": {
-    "nadena.dev.modular-avatar": ">=1.8.0"
+    "nadena.dev.modular-avatar": ">=1.8.0 <2.0.0-a",
+    "net.narazaka.vrchat.avatar-parameters-util": ">=1.0.0 <2.0.0-a"
   }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using VRC.SDK3.Avatars.ScriptableObjects;
+using Narazaka.VRChat.AvatarParametersUtil.Editor;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 {
@@ -9,7 +10,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
     {
         public override void OnGUI(Rect rect, SerializedProperty element, GUIContent label)
         {
-            var parameterUtil = ParameterUtil.Get(element.serializedObject);
+            var parameterUtil = AvatarParametersUtilEditor.Get(element.serializedObject);
 
             var parameter = element.FindPropertyRelative(nameof(DriveCondition.Parameter));
             var mode = element.FindPropertyRelative(nameof(DriveCondition.Mode));
@@ -20,7 +21,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             EditorGUI.LabelField(rect, label);
             rect.x += rect.width;
             rect.width = width - 195;
-            parameterUtil.ShowParameterField(rect, parameter);
+            parameterUtil.ShowParameterNameField(rect, parameter, GUIContent.none);
             if (mode.enumValueIndex == -1) mode.enumValueIndex = 0;
             if (valueType is VRCExpressionParameters.ValueType type)
             {
