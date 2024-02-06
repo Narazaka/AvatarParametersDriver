@@ -26,6 +26,10 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 2.0.0
+  - 外部連携APIの変更
+    - Avatar Menu Creator for MA は 1.9.2 以降にアップグレードして下さい (1.9.1以前だとパラメーターが正しく取れません)
+    - Avatar Parameters Exclusive Group は 0.2.0 以降にアップグレードして下さい  (0.1.2以前だとパラメーターが正しく取れません)
 - 1.2.3
   - Animator内にTriggerがあるとエラーになる問題を修正
 - 1.2.2
