@@ -1,6 +1,6 @@
 {
   "name": "net.narazaka.vrchat.avatar-parameters-driver",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "displayName": "Avatar Parameters Driver",
   "description": "Convenient VRC Parameter Driver",
   "author": {
@@ -12,6 +12,6 @@
   "url" : "https://github.com/Narazaka/AvatarParametersDriver.git",
   "vpmDependencies": {
     "nadena.dev.modular-avatar": ">=1.8.0 <2.0.0-a",
-    "net.narazaka.vrchat.avatar-parameters-util": ">=1.0.0 <2.0.0-a"
+    "net.narazaka.vrchat.avatar-parameters-util": ">=1.0.2 <2.0.0-a"
   }
 }
