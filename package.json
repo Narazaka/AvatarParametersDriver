@@ -13,6 +13,6 @@
   "unity": "2019.4",
   "vpmDependencies": {
     "nadena.dev.modular-avatar": ">=1.8.0 <2.0.0-a",
-    "net.narazaka.vrchat.avatar-parameters-util": ">=1.0.4 <2.0.0-a"
+    "net.narazaka.vrchat.avatar-parameters-util": ">=2.0.0-rc.0 <3.0.0-a"
   }
 }

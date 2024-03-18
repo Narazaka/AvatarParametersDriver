@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
+using Narazaka.VRChat.AvatarParametersUtil;
+
 #if UNITY_EDITOR
 using UnityEditor.Animations;
 #endif
@@ -41,6 +43,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver
                 default:
                     return false;
             }
+        }
+
+        public static bool IsValidMode(AnimatorControllerParameterType valueType, AnimatorConditionMode mode)
+        {
+            return IsValidMode(valueType.ToVRCExpressionParametersValueType(), mode);
         }
 
         public static AnimatorConditionMode ModeByEnumValueIndex(int index)

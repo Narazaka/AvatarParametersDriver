@@ -1,10 +1,9 @@
 ﻿using System.Linq;
-using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEditor;
 using Narazaka.VRChat.AvatarParametersUtil.Editor;
+using Narazaka.VRChat.AvatarParametersUtil;
 using System;
 
 namespace net.narazaka.vrchat.avatar_parameters_driver.editor
@@ -36,7 +35,13 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         [Obsolete("Use AvatarParametersUtilEditor instead.")]
         public VRCExpressionParameters.Parameter GetParameter(string name)
         {
-            return AvatarParametersUtilEditor.Get(SerializedObject).GetParameter(name);
+            var parameter = AvatarParametersUtilEditor.Get(SerializedObject).GetParameter(name);
+            return new VRCExpressionParameters.Parameter()
+            {
+                name = parameter.EffectiveName,
+                valueType = parameter.ParameterType == null ? VRCExpressionParameters.ValueType.Float : ((AnimatorControllerParameterType)parameter.ParameterType).ToVRCExpressionParametersValueType(),
+                networkSynced = parameter.WantSynced,
+            };
         }
     }
 }

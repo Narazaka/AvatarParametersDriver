@@ -1,5 +1,6 @@
 {
     "name": "AvatarParametersDriver.Editor",
+    "rootNamespace": "",
     "references": [
         "AvatarParametersDriver.Runtime",
         "nadena.dev.ndmf",
@@ -7,7 +8,8 @@
         "VRC.SDKBase",
         "VRC.SDK3A",
         "Narazaka.VRChat.AvatarParametersUtil",
-        "Narazaka.VRChat.AvatarParametersUtil.Editor"
+        "Narazaka.VRChat.AvatarParametersUtil.Editor",
+        "nadena.dev.ndmf.vrchat"
     ],
     "includePlatforms": [
         "Editor"

@@ -15,7 +15,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             var parameter = element.FindPropertyRelative(nameof(DriveCondition.Parameter));
             var mode = element.FindPropertyRelative(nameof(DriveCondition.Mode));
             var threshold = element.FindPropertyRelative(nameof(DriveCondition.Threshold));
-            var valueType = parameterUtil.GetParameter(parameter.stringValue)?.valueType;
+            var valueType = parameterUtil.GetParameter(parameter.stringValue)?.ParameterType;
             var width = rect.width;
             rect.width = 65;
             EditorGUI.LabelField(rect, label);
@@ -23,23 +23,23 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             rect.width = width - 195;
             parameterUtil.ShowParameterNameField(rect, parameter, GUIContent.none);
             if (mode.enumValueIndex == -1) mode.enumValueIndex = 0;
-            if (valueType is VRCExpressionParameters.ValueType type)
+            if (valueType is AnimatorControllerParameterType type)
             {
                 if (!DriveCondition.IsValidMode(type, DriveCondition.ModeByEnumValueIndex(mode.enumValueIndex)))
                 {
                     switch (type)
                     {
-                        case VRCExpressionParameters.ValueType.Bool:
+                        case AnimatorControllerParameterType.Bool:
                             mode.enumValueIndex = 0; // If
                             break;
-                        case VRCExpressionParameters.ValueType.Int:
-                        case VRCExpressionParameters.ValueType.Float:
+                        case AnimatorControllerParameterType.Int:
+                        case AnimatorControllerParameterType.Float:
                             mode.enumValueIndex = 2; // Greater
                             break;
                     }
                 }
 
-                if (type == VRCExpressionParameters.ValueType.Bool)
+                if (type == AnimatorControllerParameterType.Bool)
                 {
                     rect.x += rect.width;
                     rect.width = 130;
@@ -56,8 +56,8 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 {
                     rect.x += rect.width;
                     rect.width = 85;
-                    var enums = type == VRCExpressionParameters.ValueType.Int ? DriveCondition.IntEnums : DriveCondition.FloatEnums;
-                    var enumLabels = type == VRCExpressionParameters.ValueType.Int ? DriveCondition.IntEnumLabels : DriveCondition.FloatEnumLabels;
+                    var enums = type == AnimatorControllerParameterType.Int ? DriveCondition.IntEnums : DriveCondition.FloatEnums;
+                    var enumLabels = type == AnimatorControllerParameterType.Int ? DriveCondition.IntEnumLabels : DriveCondition.FloatEnumLabels;
                     var partialEnumValueIndex = EditorGUI.Popup(rect, System.Array.IndexOf(enums, DriveCondition.ModeByEnumValueIndex(mode.enumValueIndex)), enumLabels);
                     mode.enumValueIndex = DriveCondition.EnumValueIndexByMode(enums[partialEnumValueIndex]);
                     rect.x += rect.width;
