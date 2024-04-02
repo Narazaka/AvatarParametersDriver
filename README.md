@@ -26,6 +26,8 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 3.0.0-rc.0
+  - NDMF Parameter Provider対応
 - 2.0.2
   - VCCでのUnity 2022プロジェクトへのインストールでUnityバージョン警告がでないように
   - 依存関係を更新
