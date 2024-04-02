@@ -26,6 +26,8 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 3.0.0-rc.1
+  - ビルドの問題を修正
 - 3.0.0-rc.0
   - NDMF Parameter Provider対応
 - 2.0.2
