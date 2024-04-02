@@ -116,7 +116,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var name = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.name));
                 var value = element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.value));
                 var parameter = ParameterUtil.GetParameter(name.stringValue);
-                var parameterIsBool = parameter != null && parameter.valueType == VRCExpressionParameters.ValueType.Bool;
+                var parameterIsBool = parameter != null && parameter.ParameterType == UnityEngine.AnimatorControllerParameterType.Bool;
                 switch (type.enumValueIndex)
                 {
                     case 2: // random

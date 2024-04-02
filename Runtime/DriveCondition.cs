@@ -43,6 +43,21 @@ namespace net.narazaka.vrchat.avatar_parameters_driver
             }
         }
 
+        public static bool IsValidMode(AnimatorControllerParameterType valueType, AnimatorConditionMode mode)
+        {
+            switch (valueType)
+            {
+                case AnimatorControllerParameterType.Bool:
+                    return mode == AnimatorConditionMode.If || mode == AnimatorConditionMode.IfNot;
+                case AnimatorControllerParameterType.Int:
+                    return mode == AnimatorConditionMode.Greater || mode == AnimatorConditionMode.Less || mode == AnimatorConditionMode.Equals || mode == AnimatorConditionMode.NotEqual;
+                case AnimatorControllerParameterType.Float:
+                    return mode == AnimatorConditionMode.Greater || mode == AnimatorConditionMode.Less;
+                default:
+                    return false;
+            }
+        }
+
         public static AnimatorConditionMode ModeByEnumValueIndex(int index)
         {
             if (index == -1) throw new System.InvalidCastException();
