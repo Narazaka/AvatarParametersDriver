@@ -1,6 +1,6 @@
 {
   "name": "net.narazaka.vrchat.avatar-parameters-driver",
-  "version": "2.0.2",
+  "version": "3.0.0-rc.0",
   "displayName": "Avatar Parameters Driver",
   "description": "Convenient VRC Parameter Driver",
   "author": {
