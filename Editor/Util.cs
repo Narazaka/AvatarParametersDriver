@@ -17,7 +17,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         [Obsolete("Use AvatarParametersUtil.GetParameters instead.")]
         public static VRCExpressionParameters.Parameter[] GetParameters(VRCAvatarDescriptor avatar, bool includeAnimators = false)
         {
-            return ParameterInfo.ForUI.GetParametersForObject(avatar.gameObject).SelectMany(p => p.SubParameters()).Select(param => new VRCExpressionParameters.Parameter
+            return ParameterInfo.ForUI.GetParametersForObject(avatar.gameObject).ToDistinctSubParameters().Select(param => new VRCExpressionParameters.Parameter
             {
                 name = param.EffectiveName,
                 valueType = param.ParameterType == null ? VRCExpressionParameters.ValueType.Float : ((AnimatorControllerParameterType)param.ParameterType).ToVRCExpressionParametersValueType(),

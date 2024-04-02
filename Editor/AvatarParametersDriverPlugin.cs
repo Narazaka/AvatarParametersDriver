@@ -25,7 +25,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             {
                 var avatarParametersDrivers = ctx.AvatarRootObject.GetComponentsInChildren<AvatarParametersDriver>();
                 if (avatarParametersDrivers.Length == 0) return;
-                var parameters = ParameterInfo.ForContext(ctx).GetParametersForObject(ctx.AvatarRootObject).SelectMany(p => p.SubParameters());
+                var parameters = ParameterInfo.ForContext(ctx).GetParametersForObject(ctx.AvatarRootObject).ToDistinctSubParameters();
                 var parameterByName = parameters.ToDictionary(p => p.EffectiveName);
 
                 var driveSettings = avatarParametersDrivers.SelectMany(d => d.DriveSettings).ToList();
