@@ -62,23 +62,17 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                             localOnly = driveSetting.LocalOnly,
                         },
                     };
-                    var toActive = idleState.AddTransition(activeState);
-                    toActive.hasExitTime = false;
-                    toActive.hasFixedDuration = true;
-                    toActive.duration = 0f;
-                    toActive.exitTime = 0f;
-                    foreach (var condition in driveSetting.Contitions)
+                    if (driveSetting.UsePreContitions)
                     {
-                        toActive.AddCondition((AnimatorConditionMode)condition.Mode, condition.Threshold, condition.Parameter);
+                        var preActiveState = layer.stateMachine.AddConfiguredState("pre_active", clip);
+                        MakeForwardTransition(idleState, preActiveState, driveSetting.PreContitions);
+                        MakeForwardTransition(preActiveState, activeState, driveSetting.Contitions);
+                        MakeBackTransition(activeState, idleState, driveSetting.Contitions);
                     }
-                    foreach (var condition in driveSetting.Contitions)
+                    else
                     {
-                        var toIdle = activeState.AddTransition(idleState);
-                        toIdle.hasExitTime = false;
-                        toIdle.hasFixedDuration = true;
-                        toIdle.duration = 0f;
-                        toIdle.exitTime = 0f;
-                        toIdle.AddCondition(((AnimatorConditionMode)condition.Mode).Reverse(), condition.Threshold, condition.Parameter);
+                        MakeForwardTransition(idleState, activeState, driveSetting.Contitions);
+                        MakeBackTransition(activeState, idleState, driveSetting.Contitions);
                     }
                 }
                 var mergeAnimator = ctx.AvatarRootObject.AddComponent<ModularAvatarMergeAnimator>();
@@ -91,6 +85,32 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                     Object.DestroyImmediate(avatarParametersDriver);
                 }
             });
+        }
+
+        void MakeForwardTransition(AnimatorState from, AnimatorState to, DriveCondition[] conditions)
+        {
+            var transition = from.AddTransition(to);
+            transition.hasExitTime = false;
+            transition.hasFixedDuration = true;
+            transition.duration = 0f;
+            transition.exitTime = 0f;
+            foreach (var condition in conditions)
+            {
+                transition.AddCondition((AnimatorConditionMode)condition.Mode, condition.Threshold, condition.Parameter);
+            }
+        }
+
+        void MakeBackTransition(AnimatorState from, AnimatorState to, DriveCondition[] reverseConditions)
+        {
+            foreach (var condition in reverseConditions)
+            {
+                var reverse = from.AddTransition(to);
+                reverse.hasExitTime = false;
+                reverse.hasFixedDuration = true;
+                reverse.duration = 0f;
+                reverse.exitTime = 0f;
+                reverse.AddCondition(((AnimatorConditionMode)condition.Mode).Reverse(), condition.Threshold, condition.Parameter);
+            }
         }
 
         AnimationClip MakeEmptyAnimationClip()

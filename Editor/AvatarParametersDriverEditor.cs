@@ -14,6 +14,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         SerializedProperty DriveSettings;
         ReorderableList DriveSettingsList;
         Dictionary<int, ReorderableList> ContitionsListCache = new Dictionary<int, ReorderableList>();
+        Dictionary<int, ReorderableList> PreContitionsListCache = new Dictionary<int, ReorderableList>();
         Dictionary<int, ReorderableList> ParametersListCache = new Dictionary<int, ReorderableList>();
         AvatarParametersUtilEditor ParameterUtil;
 
@@ -29,11 +30,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             DriveSettingsList.elementHeightCallback = (int index) =>
             {
                 var element = DriveSettings.GetArrayElementAtIndex(index);
+                var usePreContitions = element.FindPropertyRelative(nameof(DriveSetting.UsePreContitions)).boolValue;
+                var preConditionsListHeight = 0f;
+                if (usePreContitions)
+                {
+                    var preConditionsList = GetPreConditionsList(index, element);
+                    preConditionsListHeight = preConditionsList.GetHeight();
+                }
                 var conditionsList = GetConditionsList(index, element);
                 var conditionsListHeight = conditionsList.GetHeight();
                 var parametersList = GetParametersList(index, element);
                 var parametersListHeight = parametersList.GetHeight();
-                return conditionsListHeight + parametersListHeight + EditorGUIUtility.standardVerticalSpacing * 4 + EditorGUIUtility.singleLineHeight;
+                return conditionsListHeight + preConditionsListHeight + parametersListHeight + EditorGUIUtility.standardVerticalSpacing * (preConditionsListHeight == 0f ? 4 : 5) + EditorGUIUtility.singleLineHeight * 2;
             };
             DriveSettingsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
@@ -41,6 +49,16 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 rect.y += EditorGUIUtility.standardVerticalSpacing;
                 EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element.FindPropertyRelative(nameof(DriveSetting.LocalOnly)));
                 rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
+                var usePreContitions = element.FindPropertyRelative(nameof(DriveSetting.UsePreContitions));
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), usePreContitions);
+                rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
+                if (usePreContitions.boolValue)
+                {
+                    var preConditionsList = GetPreConditionsList(index, element);
+                    var preConditionsListHeight = preConditionsList.GetHeight();
+                    preConditionsList.DoList(new Rect(rect.x, rect.y, rect.width, preConditionsListHeight));
+                    rect.y += EditorGUIUtility.standardVerticalSpacing + preConditionsListHeight;
+                }
                 var conditionsList = GetConditionsList(index, element);
                 var conditionsListHeight = conditionsList.GetHeight();
                 conditionsList.DoList(new Rect(rect.x, rect.y, rect.width, conditionsListHeight));
@@ -53,6 +71,8 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             {
                 ContitionsListCache.Remove(oldIndex);
                 ContitionsListCache.Remove(newIndex);
+                PreContitionsListCache.Remove(oldIndex);
+                PreContitionsListCache.Remove(newIndex);
                 ParametersListCache.Remove(oldIndex);
                 ParametersListCache.Remove(newIndex);
             };
@@ -76,13 +96,22 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             return conditionsList;
         }
 
+        ReorderableList GetPreConditionsList(int index, SerializedProperty driveSetting = null)
+        {
+            if (!PreContitionsListCache.TryGetValue(index, out var conditionsList))
+            {
+                conditionsList = PreContitionsListCache[index] = SetupConditionsList((driveSetting ?? DriveSettings.GetArrayElementAtIndex(index)).FindPropertyRelative(nameof(DriveSetting.PreContitions)));
+            }
+            return conditionsList;
+        }
+
         ReorderableList SetupConditionsList(SerializedProperty conditionsElement)
         {
             var parameterLabelContent = new GUIContent("Parameter");
             var conditionsList = new ReorderableList(serializedObject, conditionsElement);
             conditionsList.drawHeaderCallback = (Rect rect) =>
             {
-                EditorGUI.LabelField(rect, "Conditions");
+                EditorGUI.LabelField(rect, conditionsElement.displayName);
             };
             conditionsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {

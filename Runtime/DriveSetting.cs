@@ -12,6 +12,10 @@ namespace net.narazaka.vrchat.avatar_parameters_driver
         [SerializeField]
         public DriveCondition[] Contitions;
         [SerializeField]
+        public DriveCondition[] PreContitions;
+        [SerializeField]
+        public bool UsePreContitions;
+        [SerializeField]
         public VRC_AvatarParameterDriver.Parameter[] Parameters;
     }
 }
