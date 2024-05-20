@@ -26,6 +26,10 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 3.1.0
+  - 事前条件設定（PreConditions）追加
+    - 通常は `idle`→（Conditionsを満たす）→`active`（VRCAvatarParameterDriver動作）→（Conditionsの逆を満たす）→`idle` というステートマシンになります。
+    - `UsePreCondition`が有効だと `idle`→（PreConditionsを満たす）→`pre_active`→（Conditionsを満たす）→`active`（VRCAvatarParameterDriver動作）→（Conditionsの逆を満たす）→`idle` というステートマシンになります。
 - 3.0.0
   - NDMF Parameter Provider対応
   - VCCのバグで非互換の依存関係をインストールできてしまう問題があるために緊急的にリリースとした物です。安定性が低い可能性があります。
