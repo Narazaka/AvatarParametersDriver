@@ -183,7 +183,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         EditorGUI.PropertyField(rect, type, GUIContent.none);
                         rect.x += rect.width;
                         rect.width = width - 180;
-                        ParameterUtil.ShowParameterNameField(rect, name, GUIContent.none);
+                        ParameterUtil.ShowParameterNameField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)), GUIContent.none);
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
@@ -212,7 +212,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
                         rect.x = x + 70;
                         rect.width = width - 180;
-                        ParameterUtil.ShowParameterNameField(rect, element.FindPropertyRelative(nameof(VRC_AvatarParameterDriver.Parameter.source)), GUIContent.none);
+                        ParameterUtil.ShowParameterNameField(rect, name, GUIContent.none);
                         if (convertRange.boolValue)
                         {
                             rect.x += rect.width;
