@@ -26,6 +26,8 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 3.1.1
+  - Drive ParameterのCopyの変数指定UIが見た目と逆になっていた（destination→sourceになっていた）バグの修正
 - 3.1.0
   - 事前条件設定（PreConditions）追加
     - 通常は `idle`→（Conditionsを満たす）→`active`（VRCAvatarParameterDriver動作）→（Conditionsの逆を満たす）→`idle` というステートマシンになります。
