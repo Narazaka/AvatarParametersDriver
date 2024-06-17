@@ -26,6 +26,9 @@ NDMF・Modular Avatarを利用しています。
 
 ## 更新履歴
 
+- 3.1.2
+  - Greater / Less のラベルが`>=`等になっていたのを意味的に正しい`>`に修正
+  - IntパラメーターについてGreater / Lessを設定したときに正しく戻るように修正
 - 3.1.1
   - Drive ParameterのCopyの変数指定UIが見た目と逆になっていた（destination→sourceになっていた）バグの修正
 - 3.1.0
