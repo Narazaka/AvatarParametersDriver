@@ -67,12 +67,12 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         var preActiveState = layer.stateMachine.AddConfiguredState("pre_active", clip);
                         MakeForwardTransition(idleState, preActiveState, driveSetting.PreContitions);
                         MakeForwardTransition(preActiveState, activeState, driveSetting.Contitions);
-                        MakeBackTransition(activeState, idleState, driveSetting.Contitions);
+                        MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
                     }
                     else
                     {
                         MakeForwardTransition(idleState, activeState, driveSetting.Contitions);
-                        MakeBackTransition(activeState, idleState, driveSetting.Contitions);
+                        MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
                     }
                 }
                 var mergeAnimator = ctx.AvatarRootObject.AddComponent<ModularAvatarMergeAnimator>();
@@ -100,7 +100,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             }
         }
 
-        void MakeBackTransition(AnimatorState from, AnimatorState to, DriveCondition[] reverseConditions)
+        void MakeBackTransition(AnimatorState from, AnimatorState to, DriveCondition[] reverseConditions, Dictionary<string, ProvidedParameter> parameterByName)
         {
             foreach (var condition in reverseConditions)
             {
@@ -109,7 +109,9 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 reverse.hasFixedDuration = true;
                 reverse.duration = 0f;
                 reverse.exitTime = 0f;
-                reverse.AddCondition(((AnimatorConditionMode)condition.Mode).Reverse(), condition.Threshold, condition.Parameter);
+                var type = parameterByName.TryGetValue(condition.Parameter, out var pp) ? pp.ParameterType : null;
+                var reversedCondition = condition.Reverse(type);
+                reverse.AddCondition((AnimatorConditionMode)reversedCondition.Mode, reversedCondition.Threshold, reversedCondition.Parameter);
             }
         }
 

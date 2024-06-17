@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
 #if UNITY_EDITOR
@@ -28,6 +28,25 @@ namespace net.narazaka.vrchat.avatar_parameters_driver
         }
 
 #if UNITY_EDITOR
+        public DriveCondition Reverse(AnimatorControllerParameterType? type)
+        {
+            switch (Mode)
+            {
+                case ConditionMode.If:
+                case ConditionMode.IfNot:
+                    return new DriveCondition { Parameter = Parameter, Mode = Mode == ConditionMode.If ? ConditionMode.IfNot : ConditionMode.If, Threshold = Threshold };
+                case ConditionMode.Equals:
+                case ConditionMode.NotEqual:
+                    return new DriveCondition { Parameter = Parameter, Mode = Mode == ConditionMode.Equals ? ConditionMode.NotEqual : ConditionMode.Equals, Threshold = Threshold };
+                case ConditionMode.Greater:
+                    return new DriveCondition { Parameter = Parameter, Mode = ConditionMode.Less, Threshold = type == AnimatorControllerParameterType.Int ? Threshold + 1 : Threshold };
+                case ConditionMode.Less:
+                    return new DriveCondition { Parameter = Parameter, Mode = ConditionMode.Greater, Threshold = type == AnimatorControllerParameterType.Int ? Threshold - 1 : Threshold };
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
         public static bool IsValidMode(VRCExpressionParameters.ValueType valueType, AnimatorConditionMode mode)
         {
             switch (valueType)
