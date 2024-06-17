@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
 #if UNITY_EDITOR
@@ -85,16 +85,16 @@ namespace net.narazaka.vrchat.avatar_parameters_driver
 
         public static string[] IntEnumLabels = new[]
         {
-            ">=Greater",
-            "<=Less",
+            ">Greater",
+            "<Less",
             "==Equals",
             "!=NotEqual",
         };
 
         public static string[] FloatEnumLabels = new[]
         {
-            ">=Greater",
-            "<=Less",
+            ">Greater",
+            "<Less",
         };
 #endif
     }
