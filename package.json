@@ -10,6 +10,8 @@
   "license": "Zlib",
   "type": "tool",
   "url" : "https://github.com/Narazaka/AvatarParametersDriver.git",
+  "documentationUrl": "https://avatar-menu-creator-for-ma.vrchat.narazaka.net/usecases/parameters-driver/",
+  "changelogUrl": "https://github.com/Narazaka/AvatarParametersDriver#%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4",
   "unity": "2019.4",
   "vpmDependencies": {
     "nadena.dev.modular-avatar": ">=1.9.10 <2.0.0-a",
