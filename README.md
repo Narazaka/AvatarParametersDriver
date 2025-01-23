@@ -31,6 +31,8 @@ https://github.com/Narazaka/AvatarParametersDriver/releases/latest から `net.n
 
 ## 更新履歴
 
+- 3.2.0
+  - 日本語化
 - 3.1.3
   - 更新履歴URL等をマニフェストに追加
 - 3.1.2
