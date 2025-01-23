@@ -67,12 +67,26 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         var preActiveState = layer.stateMachine.AddConfiguredState("pre_active", clip);
                         MakeForwardTransition(idleState, preActiveState, driveSetting.PreContitions);
                         MakeForwardTransition(preActiveState, activeState, driveSetting.Contitions);
-                        MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
+                        if (driveSetting.HasReturnConditions)
+                        {
+                            MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
+                        }
+                        else
+                        {
+                            MakeFreeBackTransition(activeState, idleState);
+                        }
                     }
                     else
                     {
                         MakeForwardTransition(idleState, activeState, driveSetting.Contitions);
-                        MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
+                        if (driveSetting.HasReturnConditions)
+                        {
+                            MakeBackTransition(activeState, idleState, driveSetting.Contitions, parameterByName);
+                        }
+                        else
+                        {
+                            MakeFreeBackTransition(activeState, idleState);
+                        }
                     }
                 }
                 var mergeAnimator = ctx.AvatarRootObject.AddComponent<ModularAvatarMergeAnimator>();
@@ -113,6 +127,15 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var reversedCondition = condition.Reverse(type);
                 reverse.AddCondition((AnimatorConditionMode)reversedCondition.Mode, reversedCondition.Threshold, reversedCondition.Parameter);
             }
+        }
+
+        void MakeFreeBackTransition(AnimatorState from, AnimatorState to)
+        {
+            var transition = from.AddTransition(to);
+            transition.hasExitTime = true;
+            transition.hasFixedDuration = true;
+            transition.duration = 0f;
+            transition.exitTime = 0f;
         }
 
         AnimationClip MakeEmptyAnimationClip()

@@ -31,6 +31,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             {
                 var element = DriveSettings.GetArrayElementAtIndex(index);
                 var usePreContitions = element.FindPropertyRelative(nameof(DriveSetting.UsePreContitions)).boolValue;
+                var noReturnConditions = element.FindPropertyRelative(nameof(DriveSetting.NoReturnConditions));
                 var preConditionsListHeight = 0f;
                 if (usePreContitions)
                 {
@@ -41,7 +42,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var conditionsListHeight = conditionsList.GetHeight();
                 var parametersList = GetParametersList(index, element);
                 var parametersListHeight = parametersList.GetHeight();
-                return conditionsListHeight + preConditionsListHeight + parametersListHeight + EditorGUIUtility.standardVerticalSpacing * (preConditionsListHeight == 0f ? 4 : 5) + EditorGUIUtility.singleLineHeight * 2;
+                return conditionsListHeight + preConditionsListHeight + parametersListHeight + EditorGUIUtility.standardVerticalSpacing * (preConditionsListHeight == 0f ? 5 : 6) + EditorGUIUtility.singleLineHeight * 3 + (noReturnConditions.boolValue ? EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight : 0);
             };
             DriveSettingsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
@@ -66,6 +67,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 var parametersList = GetParametersList(index, element);
                 var parametersListHeight = parametersList.GetHeight();
                 parametersList.DoList(new Rect(rect.x, rect.y, rect.width, parametersListHeight));
+                rect.y += EditorGUIUtility.standardVerticalSpacing + parametersListHeight;
+                var noReturnConditions = element.FindPropertyRelative(nameof(DriveSetting.NoReturnConditions));
+                var noReturnConditionsRect = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
+                EditorGUI.BeginProperty(noReturnConditionsRect, T.NoReturnConditions.GUIContent, noReturnConditions);
+                noReturnConditions.boolValue = EditorGUI.ToggleLeft(noReturnConditionsRect, T.NoReturnConditions.GUIContent, noReturnConditions.boolValue);
+                EditorGUI.EndProperty();
+                rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
+                if (noReturnConditions.boolValue)
+                {
+                    EditorGUI.HelpBox(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), T.NoReturnConditionsDescription, MessageType.Info);
+                    rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
+                }
             };
             DriveSettingsList.onReorderCallbackWithDetails = (ReorderableList list, int oldIndex, int newIndex) =>
             {
@@ -280,6 +293,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             public static istring Parameters = new istring("Parameters", "パラメーター");
             public static istring DriveParameters = new istring("Drive Parameters", "うごかすパラメーター");
             public static istring ConvertRange = new istring("Convert Range", "値の範囲を変換");
+            public static istring NoReturnConditions = new istring("No Return Conditions (Experimental)", "戻り条件を設定しない（実験的）");
+            public static istring NoReturnConditionsDescription = new istring(
+                "Parameters will continue to be set as long as the condition is satisfied.",
+                "条件が成立している間パラメーターが設定され続けます"
+                );
         }
     }
 }
