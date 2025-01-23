@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -25,7 +25,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
             {
-                EditorGUI.LabelField(rect, "Drive Settings");
+                EditorGUI.LabelField(rect, T.DriveSettings);
             };
             DriveSettingsList.elementHeightCallback = (int index) =>
             {
@@ -47,10 +47,10 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             {
                 var element = DriveSettings.GetArrayElementAtIndex(index);
                 rect.y += EditorGUIUtility.standardVerticalSpacing;
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element.FindPropertyRelative(nameof(DriveSetting.LocalOnly)));
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element.FindPropertyRelative(nameof(DriveSetting.LocalOnly)), T.LocalOnly.GUIContent);
                 rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
                 var usePreContitions = element.FindPropertyRelative(nameof(DriveSetting.UsePreContitions));
-                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), usePreContitions);
+                EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), usePreContitions, T.UsePreContitions.GUIContent);
                 rect.y += EditorGUIUtility.standardVerticalSpacing + EditorGUIUtility.singleLineHeight;
                 if (usePreContitions.boolValue)
                 {
@@ -91,7 +91,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             if (!ContitionsListCache.TryGetValue(index, out var conditionsList))
             {
-                conditionsList = ContitionsListCache[index] = SetupConditionsList((driveSetting ?? DriveSettings.GetArrayElementAtIndex(index)).FindPropertyRelative(nameof(DriveSetting.Contitions)));
+                conditionsList = ContitionsListCache[index] = SetupConditionsList((driveSetting ?? DriveSettings.GetArrayElementAtIndex(index)).FindPropertyRelative(nameof(DriveSetting.Contitions)), T.Contitions.GUIContent);
             }
             return conditionsList;
         }
@@ -100,18 +100,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             if (!PreContitionsListCache.TryGetValue(index, out var conditionsList))
             {
-                conditionsList = PreContitionsListCache[index] = SetupConditionsList((driveSetting ?? DriveSettings.GetArrayElementAtIndex(index)).FindPropertyRelative(nameof(DriveSetting.PreContitions)));
+                conditionsList = PreContitionsListCache[index] = SetupConditionsList((driveSetting ?? DriveSettings.GetArrayElementAtIndex(index)).FindPropertyRelative(nameof(DriveSetting.PreContitions)), T.PreContitions.GUIContent);
             }
             return conditionsList;
         }
 
-        ReorderableList SetupConditionsList(SerializedProperty conditionsElement)
+        ReorderableList SetupConditionsList(SerializedProperty conditionsElement, GUIContent header)
         {
-            var parameterLabelContent = new GUIContent("Parameter");
+            var parameterLabelContent = T.Parameters.GUIContent;
             var conditionsList = new ReorderableList(serializedObject, conditionsElement);
             conditionsList.drawHeaderCallback = (Rect rect) =>
             {
-                EditorGUI.LabelField(rect, conditionsElement.displayName);
+                EditorGUI.LabelField(rect, header);
             };
             conditionsList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
@@ -135,7 +135,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             var parametersList = new ReorderableList(serializedObject, parametersElement);
             parametersList.drawHeaderCallback = (Rect rect) =>
             {
-                EditorGUI.LabelField(rect, "Drive Parameters");
+                EditorGUI.LabelField(rect, T.DriveParameters);
             };
             parametersList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
@@ -205,7 +205,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                         rect.x = x + width - 110;
                         rect.width = 110;
                         EditorGUIUtility.labelWidth = 90;
-                        EditorGUI.PropertyField(rect, convertRange);
+                        EditorGUI.PropertyField(rect, convertRange, T.ConvertRange.GUIContent);
                         EditorGUIUtility.labelWidth = 0;
 
                         rect.y += rect.height + EditorGUIUtility.standardVerticalSpacing;
@@ -268,6 +268,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
                 }
             };
             return parametersList;
+        }
+
+        static class T
+        {
+            public static istring DriveSettings = new istring("Drive Settings", "パラメータードライバー設定");
+            public static istring LocalOnly = new istring("Local Only", "ローカルのみ");
+            public static istring UsePreContitions = new istring("Use Pre Contitions", "事前条件を使用");
+            public static istring Contitions = new istring("Contitions", "条件");
+            public static istring PreContitions = new istring("Pre Contitions", "事前条件");
+            public static istring Parameters = new istring("Parameters", "パラメーター");
+            public static istring DriveParameters = new istring("Drive Parameters", "うごかすパラメーター");
+            public static istring ConvertRange = new istring("Convert Range", "値の範囲を変換");
         }
     }
 }
