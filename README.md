@@ -31,6 +31,8 @@ https://github.com/Narazaka/AvatarParametersDriver/releases/latest から `net.n
 
 ## 更新履歴
 
+- 3.3.0
+  - アイコンが付きました <img src="Icons/AvatarParametersDriver.png" width="18" height="18">
 - 3.2.0
   - 日本語化
 - 3.1.3
