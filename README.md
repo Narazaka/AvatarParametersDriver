@@ -31,6 +31,8 @@ https://github.com/Narazaka/AvatarParametersDriver/releases/latest から `net.n
 
 ## 更新履歴
 
+- 3.4.1
+  - シーン上の邪魔なアイコンがデフォルトで無効になるように
 - 3.4.0
   - 「戻り条件を設定しない（実験的）」機能を追加。ONにすると条件が成立している間パラメーターが設定され続けます。
 - 3.3.0
