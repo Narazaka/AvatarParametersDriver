@@ -31,6 +31,8 @@ https://github.com/Narazaka/AvatarParametersDriver/releases/latest から `net.n
 
 ## 更新履歴
 
+- 3.4.2
+  - インスペクタがたまに表示されずエラーを吐く場合がある問題を修正
 - 3.4.1
   - シーン上の邪魔なアイコンがデフォルトで無効になるように
 - 3.4.0
