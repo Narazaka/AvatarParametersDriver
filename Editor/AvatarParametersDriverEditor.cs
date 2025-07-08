@@ -22,6 +22,12 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             ParameterUtil = AvatarParametersUtilEditor.Get(serializedObject, true);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
+        }
+
+        void SetDriveSettingsList()
+        {
+            if (DriveSettingsList != null) return; // already set
+
             DriveSettingsList = new ReorderableList(serializedObject, DriveSettings);
             DriveSettingsList.drawHeaderCallback = (Rect rect) =>
             {
@@ -95,6 +101,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
         {
             serializedObject.Update();
 
+            SetDriveSettingsList();
             DriveSettingsList.DoLayoutList();
 
             serializedObject.ApplyModifiedProperties();
