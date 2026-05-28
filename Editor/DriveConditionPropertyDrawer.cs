@@ -10,7 +10,9 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
     {
         public override void OnGUI(Rect rect, SerializedProperty element, GUIContent label)
         {
-            var parameterUtil = AvatarParametersUtilEditor.Get(element.serializedObject);
+            var parameterUtil = element.serializedObject.FindProperty(nameof(AvatarParametersDriver.PreserveHierarchy)).boolValue
+                ? AvatarParametersUtilEditor.GetForHierarchy(element.serializedObject)
+                : AvatarParametersUtilEditor.GetForAvatarRoot(element.serializedObject);
 
             var parameter = element.FindPropertyRelative(nameof(DriveCondition.Parameter));
             var mode = element.FindPropertyRelative(nameof(DriveCondition.Mode));

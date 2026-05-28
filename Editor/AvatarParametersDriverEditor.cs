@@ -12,16 +12,23 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
     public class AvatarParametersDriverEditor : Editor
     {
         SerializedProperty DriveSettings;
+        SerializedProperty PreserveHierarchy;
         ReorderableList DriveSettingsList;
         Dictionary<int, ReorderableList> ContitionsListCache = new Dictionary<int, ReorderableList>();
         Dictionary<int, ReorderableList> PreContitionsListCache = new Dictionary<int, ReorderableList>();
         Dictionary<int, ReorderableList> ParametersListCache = new Dictionary<int, ReorderableList>();
-        AvatarParametersUtilEditor ParameterUtil;
+        AvatarParametersUtilEditor ParameterUtil =>
+            PreserveHierarchy != null && PreserveHierarchy.boolValue
+                ? AvatarParametersUtilEditor.GetForHierarchy(serializedObject)
+                : AvatarParametersUtilEditor.GetForAvatarRoot(serializedObject);
 
         void OnEnable()
         {
-            ParameterUtil = AvatarParametersUtilEditor.Get(serializedObject, true);
             DriveSettings = serializedObject.FindProperty(nameof(AvatarParametersDriver.DriveSettings));
+            PreserveHierarchy = serializedObject.FindProperty(nameof(AvatarParametersDriver.PreserveHierarchy));
+            // 両モードの最新キャッシュを作成しておく（初回または再OnEnable時に最新化）
+            AvatarParametersUtilEditor.GetForAvatarRoot(serializedObject, forceUpdate: true);
+            AvatarParametersUtilEditor.GetForHierarchy(serializedObject, forceUpdate: true);
         }
 
         void SetDriveSettingsList()
@@ -103,6 +110,12 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
 
             SetDriveSettingsList();
             DriveSettingsList.DoLayoutList();
+
+            var rect = EditorGUILayout.GetControlRect();
+            var label = new GUIContent(T.PreserveHierarchy, T.PreserveHierarchyDescription);
+            EditorGUI.BeginProperty(rect, label, PreserveHierarchy);
+            PreserveHierarchy.boolValue = !EditorGUI.Toggle(rect, label, !PreserveHierarchy.boolValue);
+            EditorGUI.EndProperty();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -304,6 +317,11 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             public static istring NoReturnConditionsDescription = new istring(
                 "Parameters will continue to be set as long as the condition is satisfied.",
                 "条件が成立している間パラメーターが設定され続けます"
+                );
+            public static istring PreserveHierarchy = new istring("Ignore Hierarchy", "階層を無視");
+            public static istring PreserveHierarchyDescription = new istring(
+                "Old Behavior. Even when you are in the renamed hierarchy of MA Parameters, use the name outside.",
+                "古い挙動です。MA Parametersの名前変更された階層内にいるときも外の名前を使います。"
                 );
         }
     }
