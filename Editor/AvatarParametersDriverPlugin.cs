@@ -55,6 +55,8 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             var parameterByName = parameters.ToDictionary(p => p.EffectiveName);
 
             var driveSettings = avatarParametersDrivers.SelectMany(d => d.DriveSettings).ToList();
+            // レイヤー名にGameObject名を出すため、driveSettings と同じ順序で持ち主のGameObjectを並べておく
+            var driveSettingOwners = avatarParametersDrivers.SelectMany(d => d.DriveSettings.Select(_ => d.gameObject)).ToList();
             var parameterNames = driveSettings.SelectMany(d => d.Contitions).Select(d => d.Parameter)
                 .Concat(driveSettings.SelectMany(d => d.Parameters).Select(d => d.name))
                 .Concat(driveSettings.SelectMany(d => d.Parameters).Where(p => p.type == VRC_AvatarParameterDriver.ChangeType.Copy).Select(d => d.source))
@@ -86,7 +88,7 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             for (var i = 0; i < driveSettings.Count; ++i)
             {
                 var driveSetting = driveSettings[i];
-                var layer = animator.AddLastLayer($"Avatar Parameters Driver {i}");
+                var layer = animator.AddLastLayer($"Avatar Parameters Driver [{driveSettingOwners[i].name}]");
                 var idleState = layer.stateMachine.AddConfiguredState("idle", clip);
                 layer.stateMachine.defaultState = idleState;
                 var activeState = layer.stateMachine.AddConfiguredState("active", clip);
