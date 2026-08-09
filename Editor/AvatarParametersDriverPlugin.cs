@@ -4,6 +4,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
+using nadena.dev.ndmf.localization;
 using UnityEngine.Animations;
 using UnityEditor.Animations;
 using VRC.SDK3.Avatars.Components;
@@ -61,7 +62,18 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             var invalidParameters = parameterNames.Where(p => !parameterByName.ContainsKey(p)).ToArray();
             if (invalidParameters.Length > 0)
             {
-                throw new System.InvalidOperationException($"Parameters {string.Join(", ", invalidParameters)} not found");
+                var invalidParameterSet = new HashSet<string>(invalidParameters);
+                // 複数コンポーネントがマージされている場合があるため、どのコンポーネントが無効なパラメーターを参照しているか個別に報告する
+                foreach (var driver in avatarParametersDrivers)
+                {
+                    var missingInDriver = ParameterNamesOf(driver).Where(invalidParameterSet.Contains).ToArray();
+                    if (missingInDriver.Length == 0) continue;
+                    using (ErrorReport.WithContextObject(driver.gameObject))
+                    {
+                        ErrorReport.ReportError(new ParametersNotFoundError(missingInDriver));
+                    }
+                }
+                return;
             }
             var animator = new AnimatorController();
             foreach (var parameterName in parameterNames)
@@ -161,11 +173,48 @@ namespace net.narazaka.vrchat.avatar_parameters_driver.editor
             transition.exitTime = 0f;
         }
 
+        string[] ParameterNamesOf(AvatarParametersDriver driver)
+        {
+            return driver.DriveSettings.SelectMany(d => d.Contitions).Select(d => d.Parameter)
+                .Concat(driver.DriveSettings.SelectMany(d => d.Parameters).Select(d => d.name))
+                .Concat(driver.DriveSettings.SelectMany(d => d.Parameters).Where(p => p.type == VRC_AvatarParameterDriver.ChangeType.Copy).Select(d => d.source))
+                .Distinct().ToArray();
+        }
+
         AnimationClip MakeEmptyAnimationClip()
         {
             var clip = new AnimationClip();
             clip.SetCurve("__AvatarParametersDriver_EMPTY__", typeof(GameObject), "localPosition.x", new AnimationCurve { keys = new Keyframe[] { new Keyframe { time = 0, value = 0 }, new Keyframe { time = 1f / 60f, value = 0 } } });
             return clip;
+        }
+
+        static readonly istring Title = new istring("Parameters not found", "パラメーターが見付かりませんでした");
+
+        // NDMF標準の SimpleError を使うと、Error Report ウィンドウで他のエラーと同じ
+        // アイコン + タイトル + 内容のレイアウトになる。ローカライズ機構は使わないので、
+        // キーを素通しして常に渡された文字列（istring が現在の言語で解決した文字列）を
+        // そのまま表示する Localizer を充てる
+        static readonly Localizer PassthroughLocalizer = new Localizer("en-US", () => new List<(string, System.Func<string, string>)>
+        {
+            ("en-US", key => "{0}"),
+        });
+
+        class ParametersNotFoundError : SimpleError
+        {
+            readonly string detail;
+
+            public ParametersNotFoundError(string[] parameters)
+            {
+                detail = string.Join(", ", parameters);
+            }
+
+            public override Localizer Localizer => PassthroughLocalizer;
+            public override string TitleKey => Title;
+            public override string[] TitleSubst => new string[] { Title };
+            public override string DetailsKey => detail;
+            public override string[] DetailsSubst => new[] { detail };
+            public override string FormatHint() => null;
+            public override ErrorSeverity Severity => ErrorSeverity.Error;
         }
     }
 }
