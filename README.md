@@ -31,6 +31,10 @@ https://github.com/Narazaka/AvatarParametersDriver/releases/latest から `net.n
 
 ## 更新履歴
 
+- 3.5.0
+  - GameObject階層ごとのパラメーター（リネーム）に対応
+  - パラメーター名が無いときのエラーを分かりやすく
+  - レイヤー名にGameObject名を追加
 - 3.5.0-beta.0
   - GameObject階層ごとのパラメーター（リネーム）に対応
 - 3.4.2
